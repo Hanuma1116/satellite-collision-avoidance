@@ -1,184 +1,67 @@
+On-orbit Satellite Collision Avoidance System
 
-# Satellite Collision Avoidance
+Overview
 
+The On-orbit Satellite Collision Avoidance System is a comprehensive project designed to simulate, train, and execute collision avoidance strategies for satellites in orbit. Using advanced algorithms such as Monte Carlo Tree Search (MCTS), Evolution Strategies (ES), and others, this system provides a robust platform for mitigating the risks of satellite collisions in space.
 
-## Motivation
+Features
 
-Since 2004 the number of space launches has been gradually increasing. Currently, there are more than 100 satellites launched into space every year. This number could grow rapidly due to such projects as the constellation providing worldwide internet access internet by OneWeb. The increasing amount of objects in space leads to a higher probability of their collision.
+Collision Simulation: Simulate potential collision scenarios using realistic environment parameters.
 
-Most conjunction events are currently processed manually. In this project, we employ state-of-the-art **reinforcement learning** methods to create a system for **automatic maneuver optimization** in order to avoid collisions.
+Environment Generation: Dynamically generate collision scenarios with configurable debris count, start, and end times.
 
-|![](data/images/stuffin_space.png)|
-|:--:| 
-|Space debris reconstrucion from [Stuffin Space project](http://stuffin.space)|
+Model Training: Train collision avoidance models using various algorithms including:
 
-## Flow overview
+Cross Entropy (CE)
 
-![](data/images/Space_Navigator_scheme.png)
+Evolution Strategies (ES)
 
-**1** and **2**: Space objects are monitored by ROSCOSMOS <br />
-**3**: ROSCOSMOS computes conjunction events <br /> 
-**4**: Space Navigator gets data from ROSCOSMOS <br />
-**5**: Environment is solved with RL <br />
-**6**: Space Navigator returns optimal collision avoidance maneuver <br />
+Baseline
 
-## Installation
+Monte Carlo Tree Search (MCTS)
 
-### Step 1
+Collinear Grid Search (Collinear_GS)
 
-To set up the project first copy the repo to your local machine:
+Visualization: Web-based interface with interactive controls for running simulations and training models.
 
-``` 
-git clone https://github.com/yandexdataschool/satellite-collision-avoidance.git
-```
+Satellite Movement Simulation: Visual representation of satellites and debris motion in a space-themed UI.
 
-### Step 2
+Installation
 
-After cloning the repo, install **requirements**:
+Clone the repository:
 
-```
- pip install -r requirements.txt
-```
+git clone https://github.com/HanuAkula/satellite-collision-avoidance.git
+cd satellite-collision-avoidance
 
-We use **Python 3.6.5** and following libraries:
-> * Pykep
-> * Pandas
-> * Matplotlib
-> * Numpy
-> * Scipy
-> * Torch
-> * tqdm
+Set up a virtual environment:
 
-If you have problems with Pykep installation, you could use [this link](https://esa.github.io/pykep/documentation/index.html).
+python -m venv satellite_env
+source satellite_env/bin/activate  # On Windows: satellite_env\Scripts\activate
 
-### Step 3
+Install dependencies:
 
-Install the package:
-```
-python setup.py install
-```
+pip install -r requirements.txt
 
-or use for development:
-```
-python setup.py develop
-```
+Run the Flask application:
 
-### Run Examples
+python dashboard.py
 
-Now you can run examples of space simulator.
+Open the application in your browser:
 
-#### Example 1: test fight
+http://127.0.0.1:5000
 
-Run following code:
-```
-python examples/test_flight.py -p true
-```
+Usage
 
-If evereything is correct, you should get such plot:
+Web Interface
 
-![](data/images/test_flight.png)
+The system features an interactive web-based dashboard where you can:
 
-And output:
-```
-Start time: 6000.0   End time: 6000.01   Simulation step:1e-06
+Run test flights.
 
-...
-Space objects description
-...
+Simulate collision scenarios.
 
-Simulation ended in 0.0050948 sec.
+Generate new environments for testing.
 
-Maneuvers table:
-no maneuvers.
+Train various models with your choice of algorithm.
 
-Collisions (distance <= 2000 meters):
-    no collisions without maneuvers.
-
-Parameters table:
-...
-```
-
-#### Example 2: maneuvers for random generated collision situation
-
-Run following code to generate collision situation environment with 5 dangerous debris objects in the time interval from 6601 to 6601.1 ([mjd2000](http://www.solarsystemlab.com/faq.html)) and save it to data/environments/generated_collision_5_debr.env:
-```
-python generation/generate_collision.py \
--save_path data/environments/generated_collision_5_debr.env \
--n_d 5 -start 6601 -end 6601.1 -before 0.1
-```
-
-Then, to calculate the maneuvers using the Cross Entropy method and save them to training/agents_tables/CE/action_table_CE_for_generated_collision_5_debr.csv, run:
-```
-python training/CE/CE_train_for_collision.py \
--env data/environments/generated_collision_5_debr.env -print true \
--save_path training/agents_tables/CE/action_table_CE_for_generated_collision_5_debr.csv \
--r false -n_m 1
-```
-
-Finally, to run the simulator for generated environment and obtained maneuvers:
-```
-python  examples/collision.py -env data/environments/generated_collision_5_debr.env \
--model training/agents_tables/CE/action_table_CE_for_generated_collision_5_debr.csv
-```
-
-
-
-
-
-
-
-
-
-
-## Running the tests
-
-Currently there are only tests for api module. Run it with command:
-```
-python tests/test_api.py
-```
-
-## Documentation and tutorials
-
-Tutorial on environment setup and simulator:
-* [Simulator](examples/Notebooks/tutorials/Simulator_tutorial.ipynb)
-
-Tutorial on learning an agent: 
-* [Baseline](examples/Notebooks/tutorials/Baseline_tutorial.ipynb)
-* [Collinear Grid Search](examples/Notebooks/tutorials/Collinear_GS_tutorial.ipynb)
-* [Cross-Entropy method](examples/Notebooks/tutorials/CE_tutorial.ipynb)
-
-## RL Methods description
-
-1. [Baseline](space_navigator/models/baseline/README.md)
-2. [Collinear Grid Search](space_navigator/models/collinear_GS/README.md)
-3. [Cross-Entropy method](space_navigator/models/CE/README.md)
-
-## Analysis and Experiments 
-
-* [The comparison of models on the generated sample of environments](examples/Notebooks/analysis_and_experiments/README.md)
-
-<!-- ## Authors
-
-* **Nikita Kazeev** - scientific director, Yandex LAMBDA Factory
-* **Irina Ponomareva** - scientific advisor, TSNIIMASH
-* **Leonid Gremyachikh** - MSc in computer science, NRU-HSE, 2st year.
-* **Dubov Dmitry** - BSc in computer science, NRU-HSE, 4th year. -->
-
-<!-- See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
- -->
-
-<!-- ## License
-
-This project is licensed under the TSNIIMASH and LAMBDA Factory. (?)
- -->
-
-<!-- ## Acknowledgments
-
-* Hat tip to anyone who's code was used
-* Inspiration
-* etc -->
-
-## Useful links
-
-* For space simulation and calculations we use **pykep** library. [[Pykep](https://esa.github.io/pykep/)]
-* http://stuffin.space/
+Execute simulations using trained models.
